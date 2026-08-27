@@ -31,7 +31,7 @@ jobs:
 
       - name: Commit and Push Structural Changes
         env:
-          PUSH_TOKEN: ${{ secrets.MY_CUSTOM_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
         run: |
@@ -42,7 +42,7 @@ jobs:
 
           if ! git diff-index --quiet HEAD; then
             git commit -m "Auto-format workflows [skip ci]"
-            git push "https://x-access-token:${PUSH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
           else
             echo "No formatting changes detected. Skipping push."
           fi
