@@ -42,7 +42,7 @@ jobs:
           
           if ! git diff-index --quiet HEAD; then
             git commit -m "Auto-format workflows [skip ci]"
-            git -c extraheader="AUTHORIZATION: basic $(echo -n "x-access-token:${PUSH_TOKEN}" | base64 | tr -d '\n')" push origin HEAD:${BRANCH}
+            git push "https://x-access-token:${PUSH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
           else
             echo "No formatting changes detected. Skipping push."
           fi
