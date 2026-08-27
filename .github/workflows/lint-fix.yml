@@ -14,7 +14,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.MY_CUSTOM_PAT }} 
+          token: ${{ secrets.MY_CUSTOM_PAT }}
+          persist-credentials: false
 
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
@@ -37,13 +38,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Use force staging or check before adding to avoid failure if no files match perfectly
           git add .github/workflows/ || true
           
           if ! git diff-index --quiet HEAD; then
-            git commit -m "Auto-format workflows"
-            # Using standard bash variables here prevents URL string parsing errors
-            git push "https://x-access-token:${PUSH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
+            git commit -m "Auto-format workflows [skip ci]"
+            git -c extraheader="AUTHORIZATION: basic $(echo -n "x-access-token:${PUSH_TOKEN}" | base64 | tr -d '\n')" push origin HEAD:${BRANCH}
           else
             echo "No formatting changes detected. Skipping push."
           fi
