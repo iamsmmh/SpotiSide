@@ -8,10 +8,10 @@
       "developerName": "spotiflacapp",
       "subtitle": "High Quality Music Streaming",
       "localizedDescription": "SpotiFLAC Mobile app with automated source updates.",
-      "version": "1.0.0",
-      "versionDate": "2026-08-28",
+      "version": "4.9.0",
+      "versionDate": "2026-08-24",
       "versionDescription": "Automated tracking for SpotiFLAC Mobile releases.",
-      "downloadURL": "https://github.com/iamsmmh/SpotiSide/releases/download/v1.0.0/app.ipa",
+      "downloadURL": "https://github.com/spotiflacapp/SpotiFLAC-Mobile/releases/download/v4.9.0/SpotiFLAC-v4.9.0-ios-unsigned.ipa",
       "iconURL": "https://raw.githubusercontent.com/iamsmmh/SpotiSide/main/icon.png",
       "size": 40000000
     }
