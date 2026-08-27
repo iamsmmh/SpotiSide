@@ -1,0 +1,38 @@
+name: Auto Fix YAML Formatting
+
+on:
+  push:
+    paths:
+      - '.github/workflows/*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  format-and-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install Prettier Linting Utility
+        run: npm install -g prettier
+
+      - name: Auto-Format and Repair YAML Files
+        run: |
+          # Prettier natively repairs bracket alignments and indentation spacing
+          prettier --write ".github/workflows/*.yml"
+
+      - name: Commit and Push Structural Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add .github/workflows/*.yml
+          git diff-index --quiet HEAD || git commit -m "style: auto-fix yaml configuration errors"
+          git push
