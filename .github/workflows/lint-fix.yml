@@ -29,8 +29,19 @@ jobs:
           prettier --write ".github/workflows/*.yml"
 
       - name: Commit and Push Structural Changes
+        env:
+          # This forces git push to authenticate explicitly with your token
+          PUSH_TOKEN: ${{ secrets.MY_CUSTOM_PAT }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/workflows/*.yml
-          git diff-index --quiet HEAD || (git commit -m "style: auto-fix yaml configuration errors" && git push)
+          
+          # Check if there are changes before pushing
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "style: auto-fix yaml configuration errors"
+            # Format the remote URL to inject the token directly
+            git push "https://x-access-token:${PUSH_TOKEN}@://github.com{{ github.repository }}.git" HEAD:main
+          else
+            echo "No formatting changes detected. Skipping push."
+          fi
