@@ -26,7 +26,7 @@ jobs:
 
       - name: Auto-Format and Repair YAML Files
         run: |
-          npx prettier --write .github/workflows/*.yml .github/workflows/*.yaml
+          npx prettier --write ".github/workflows/*.{yml,yaml}"
 
       - name: Commit and Push Structural Changes
         env:
