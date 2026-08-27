@@ -1,0 +1,17 @@
+{
+  "name": "SpotiFLAC iamsmmh Source",
+  "identifier": "com.iamsmmh.SpotiSide",
+  "apps": [
+    {
+      "name": "SpotiFLAC",
+      "bundleIdentifier": "com.spotiflac.mobile",
+      "developerName": "spotiflacapp",
+      "version": "1.0.0",
+      "versionDate": "2026-08-28",
+      "versionDescription": "Automated tracking for SpotiFLAC Mobile releases.",
+      "downloadURL": "https://github.com",
+      "iconURL": "https://githubusercontent.com",
+      "size": 40000000
+    }
+  ]
+}
