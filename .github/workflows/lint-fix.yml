@@ -31,14 +31,19 @@ jobs:
       - name: Commit and Push Structural Changes
         env:
           PUSH_TOKEN: ${{ secrets.MY_CUSTOM_PAT }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .github/workflows/*.yml .github/workflows/*.yaml
+          
+          # Use force staging or check before adding to avoid failure if no files match perfectly
+          git add .github/workflows/*.yml .github/workflows/*.yaml || true
           
           if ! git diff-index --quiet HEAD; then
             git commit -m "style: auto-fix yaml configuration errors [skip ci]"
-            git push "https://x-access-token:${PUSH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:${{ github.ref_name }}
+            # Using standard bash variables here prevents URL string parsing errors
+            git push "https://x-access-token:${PUSH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
           else
             echo "No formatting changes detected. Skipping push."
           fi
