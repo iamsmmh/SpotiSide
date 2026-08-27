@@ -3,8 +3,8 @@ name: Auto Fix YAML Formatting
 on:
   push:
     paths:
-      - '.github/workflows/*.yml'
-      - '.github/workflows/*.yaml'
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
   workflow_dispatch:
 
 jobs:
@@ -37,9 +37,9 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           git add .github/workflows/ || true
-          
+
           if ! git diff-index --quiet HEAD; then
             git commit -m "Auto-format workflows [skip ci]"
             git push "https://x-access-token:${PUSH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
