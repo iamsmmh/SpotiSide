@@ -50,4 +50,3 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add apps.json
           git diff-index --quiet HEAD || (git commit -m "chore: auto-update SpotiFLAC to v${{ steps.get_release.outputs.VERSION }}" && git push)
-
