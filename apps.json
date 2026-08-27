@@ -6,13 +6,13 @@
       "name": "SpotiFLAC",
       "bundleIdentifier": "com.spotiflac.mobile",
       "developerName": "spotiflacapp",
+      "subtitle": "High Quality Music Streaming",
       "version": "1.0.0",
       "versionDate": "2026-08-28",
       "versionDescription": "Automated tracking for SpotiFLAC Mobile releases.",
-      "downloadURL": "https://github.com",
-      "iconURL": "https://githubusercontent.com",
+      "downloadURL": "https://github.com/iamsmmh/SpotiSide/releases/download/v1.0.0/app.ipa",
+      "iconURL": "https://raw.githubusercontent.com/iamsmmh/SpotiSide/main/icon.png",
       "size": 40000000
     }
   ]
 }
-
