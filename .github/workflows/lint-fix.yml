@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
   workflow_dispatch:
 
 jobs:
@@ -13,7 +14,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          # This token must have the 'workflows' read/write scope enabled
           token: ${{ secrets.MY_CUSTOM_PAT }} 
 
       - name: Setup Node.js Environment
@@ -26,22 +26,19 @@ jobs:
 
       - name: Auto-Format and Repair YAML Files
         run: |
-          prettier --write ".github/workflows/*.yml"
+          npx prettier --write .github/workflows/*.yml .github/workflows/*.yaml
 
       - name: Commit and Push Structural Changes
         env:
-          # This forces git push to authenticate explicitly with your token
           PUSH_TOKEN: ${{ secrets.MY_CUSTOM_PAT }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .github/workflows/*.yml
+          git add .github/workflows/*.yml .github/workflows/*.yaml
           
-          # Check if there are changes before pushing
           if ! git diff-index --quiet HEAD; then
-            git commit -m "style: auto-fix yaml configuration errors"
-            # Format the remote URL to inject the token directly
-            git push "https://x-access-token:${PUSH_TOKEN}@://github.com{{ github.repository }}.git" HEAD:main
+            git commit -m "style: auto-fix yaml configuration errors [skip ci]"
+            git push "https://x-access-token:${PUSH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:${{ github.ref_name }}
           else
             echo "No formatting changes detected. Skipping push."
           fi
