@@ -1,0 +1,49 @@
+name: Auto Update SpotiFLAC Source
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Triggers automatically every 6 hours
+  workflow_dispatch: # Allows you to force run it anytime manually
+
+permissions:
+  contents: write
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Fetch Latest Release Data
+        id: get_release
+        run: |
+          RELEASE_DATA=$(curl -s https://github.com)
+          
+          # Strip 'v' character prefix from tags to get pure semantic versioning
+          VERSION=$(echo "$RELEASE_DATA" | jq -r '.tag_name' | sed 's/v//')
+          DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at' | cut -d'T' -f1)
+          
+          # Target the specific dynamic asset array ending with .ipa
+          DL_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name | endswith(".ipa")) | .browser_download_url')
+          
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "DATE=$DATE" >> $GITHUB_OUTPUT
+          echo "DL_URL=$DL_URL" >> $GITHUB_OUTPUT
+
+      - name: Update apps.json File
+        run: |
+          # Inject live updates smoothly into your static structure using jq
+          jq --arg ver "${{ steps.get_release.outputs.VERSION }}" \
+             --arg date "${{ steps.get_release.outputs.DATE }}" \
+             --arg url "${{ steps.get_release.outputs.DL_URL }}" \
+             '.apps[0].version = $ver | .apps[0].versionDate = $date | .apps[0].downloadURL = $url' \
+             apps.json > tmp.json && mv tmp.json apps.json
+
+      - name: Commit and Push Updates
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add apps.json
+          git diff-index --quiet HEAD || git commit -m "chore: auto-update SpotiFLAC to v${{ steps.get_release.outputs.VERSION }}"
+          git push
