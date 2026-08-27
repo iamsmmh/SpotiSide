@@ -18,14 +18,19 @@ jobs:
       - name: Fetch Latest Release Data
         id: get_release
         run: |
-          RELEASE_DATA=$(curl -s https://github.com)
+          # Replace OWNER/REPO with the actual target repository (e.g., iamsmmh/SpotiSide or upstream repo)
+          RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github+json" https://api.github.com/repos/OWNER/REPO/releases/latest)
 
-          # Strip 'v' character prefix from tags to get pure semantic versioning
+          # Extract attributes safely from valid JSON response
           VERSION=$(echo "$RELEASE_DATA" | jq -r '.tag_name' | sed 's/v//')
           DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at' | cut -d'T' -f1)
+          DL_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[]? | select(.name | endswith(".ipa")) | .browser_download_url' | head -n 1)
 
-          # Target the specific dynamic asset array ending with .ipa
-          DL_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name | endswith(".ipa")) | .browser_download_url')
+          # Validate output before writing to GITHUB_OUTPUT
+          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+            echo "Failed to fetch valid release data"
+            exit 1
+          fi
 
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "DATE=$DATE" >> $GITHUB_OUTPUT
@@ -33,7 +38,6 @@ jobs:
 
       - name: Update apps.json File
         run: |
-          # Inject live updates smoothly into your static structure using jq
           jq --arg ver "${{ steps.get_release.outputs.VERSION }}" \
              --arg date "${{ steps.get_release.outputs.DATE }}" \
              --arg url "${{ steps.get_release.outputs.DL_URL }}" \
@@ -43,7 +47,7 @@ jobs:
       - name: Commit and Push Updates
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add apps.json
-          git diff-index --quiet HEAD || git commit -m "chore: auto-update SpotiFLAC to v${{ steps.get_release.outputs.VERSION }}"
-          git push
+          git diff-index --quiet HEAD || (git commit -m "chore: auto-update SpotiFLAC to v${{ steps.get_release.outputs.VERSION }}" && git push)
+
