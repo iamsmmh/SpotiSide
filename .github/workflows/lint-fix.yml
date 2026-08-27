@@ -38,10 +38,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
           # Use force staging or check before adding to avoid failure if no files match perfectly
-          git add .github/workflows/*.yml .github/workflows/*.yaml || true
+          git add .github/workflows/ || true
           
           if ! git diff-index --quiet HEAD; then
-            git commit -m "style: auto-fix yaml configuration errors [skip ci]"
+            git commit -m "Auto-format workflows"
             # Using standard bash variables here prevents URL string parsing errors
             git push "https://x-access-token:${PUSH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
           else
